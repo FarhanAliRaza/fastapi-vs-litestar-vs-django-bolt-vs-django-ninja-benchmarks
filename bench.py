@@ -296,6 +296,15 @@ def generate_markdown_report(results: list[BenchResult], config: BenchConfig) ->
     return "\n".join(lines)
 
 
+# Mapping of endpoint URLs to descriptive display names for graphs
+ENDPOINT_DISPLAY_NAMES = {
+    "/json-1k": "1KB JSON Response",
+    "/json-10k": "10KB JSON Response",
+    "/db": "10 Database Reads",
+    "/slow": "2s Mock Delay",
+}
+
+
 def generate_graph(results: list[BenchResult], endpoint: str, output_path: Path) -> None:
     """Generate a bar chart with rounded corners for a specific endpoint."""
     # Filter results for this endpoint
@@ -355,8 +364,8 @@ def generate_graph(results: list[BenchResult], endpoint: str, output_path: Path)
     ax.set_xticklabels(frameworks, rotation=45, ha="right", fontsize=11)
     ax.set_ylabel("Requests per Second (RPS)", fontsize=12)
 
-    # Title
-    endpoint_name = endpoint.replace("/", "").replace("-", " ").title()
+    # Title - use descriptive name from mapping
+    endpoint_name = ENDPOINT_DISPLAY_NAMES.get(endpoint, endpoint.replace("/", "").replace("-", " ").title())
     ax.set_title(f"Framework Benchmark - {endpoint_name}", fontsize=14, fontweight="bold", pad=20)
 
     # Format y-axis with commas
@@ -379,41 +388,45 @@ def generate_graph(results: list[BenchResult], endpoint: str, output_path: Path)
 
 
 def generate_combined_graph(results: list[BenchResult], output_path: Path) -> None:
-    """Generate a single chart with all endpoints grouped by framework."""
+    """Generate a single chart with all frameworks grouped by endpoint."""
     if not results:
         return
 
     # Get unique frameworks and endpoints
     frameworks = sorted(set(r.framework for r in results))
-    endpoints = sorted(set(r.endpoint for r in results))
+    endpoints = list(set(r.endpoint for r in results))
+
+    # Sort endpoints by the order defined in ENDPOINTS list
+    endpoint_order = {ep: i for i, ep in enumerate(ENDPOINTS)}
+    endpoints = sorted(endpoints, key=lambda e: endpoint_order.get(e, 999))
 
     # Sort frameworks by average RPS across all endpoints
     framework_avg_rps = {}
     for fw in frameworks:
         fw_results = [r.rps for r in results if r.framework == fw]
         framework_avg_rps[fw] = sum(fw_results) / len(fw_results) if fw_results else 0
-    frameworks = sorted(frameworks, key=lambda f: framework_avg_rps[f])
+    frameworks = sorted(frameworks, key=lambda f: framework_avg_rps[f], reverse=True)
 
     # Create figure
-    fig, ax = plt.subplots(figsize=(14, 8))
+    _, ax = plt.subplots(figsize=(14, 8))
 
-    # Colors for each endpoint
+    # Colors for each framework
     colors = ["#8FBC8F", "#87CEEB", "#DDA0DD", "#F0E68C"]  # Green, Blue, Purple, Yellow
     edge_colors = ["#6B8E6B", "#5F9EA0", "#BA55D3", "#BDB76B"]
 
     # Bar settings
     n_frameworks = len(frameworks)
     n_endpoints = len(endpoints)
-    bar_width = 0.8 / n_endpoints
-    x_positions = range(n_frameworks)
+    bar_width = 0.8 / n_frameworks
+    x_positions = range(n_endpoints)
 
-    # Draw bars for each endpoint
-    for i, endpoint in enumerate(endpoints):
-        offset = (i - n_endpoints / 2 + 0.5) * bar_width
+    # Draw bars for each framework within each endpoint group
+    for i, framework in enumerate(frameworks):
+        offset = (i - n_frameworks / 2 + 0.5) * bar_width
         rps_values = []
 
-        for fw in frameworks:
-            r = next((x for x in results if x.framework == fw and x.endpoint == endpoint), None)
+        for endpoint in endpoints:
+            r = next((x for x in results if x.framework == framework and x.endpoint == endpoint), None)
             rps_values.append(r.rps if r else 0)
 
         # Draw rounded bars
@@ -428,7 +441,6 @@ def generate_combined_graph(results: list[BenchResult], output_path: Path) -> No
                     edgecolor=edge_colors[i % len(edge_colors)],
                     linewidth=1,
                     mutation_aspect=rps / bar_width * 0.005,
-                    label=endpoint if j == 0 else "",
                 )
                 ax.add_patch(fancy_box)
 
@@ -446,12 +458,13 @@ def generate_combined_graph(results: list[BenchResult], output_path: Path) -> No
 
     # Set axis limits
     max_rps = max(r.rps for r in results)
-    ax.set_xlim(-0.5, n_frameworks - 0.5)
+    ax.set_xlim(-0.5, n_endpoints - 0.5)
     ax.set_ylim(0, max_rps * 1.25)
 
-    # Labels and ticks
+    # Labels and ticks - use descriptive endpoint names
     ax.set_xticks(list(x_positions))
-    ax.set_xticklabels(frameworks, rotation=45, ha="right", fontsize=11)
+    endpoint_labels = [ENDPOINT_DISPLAY_NAMES.get(ep, ep) for ep in endpoints]
+    ax.set_xticklabels(endpoint_labels, rotation=45, ha="right", fontsize=11)
     ax.set_ylabel("Requests per Second (RPS)", fontsize=12)
     ax.set_title("Framework Benchmark - All Endpoints", fontsize=14, fontweight="bold", pad=20)
 
@@ -466,12 +479,12 @@ def generate_combined_graph(results: list[BenchResult], output_path: Path) -> No
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    # Legend
+    # Legend - show frameworks
     legend_patches = [
         plt.Rectangle((0, 0), 1, 1, facecolor=colors[i % len(colors)], edgecolor=edge_colors[i % len(edge_colors)])
-        for i in range(len(endpoints))
+        for i in range(len(frameworks))
     ]
-    ax.legend(legend_patches, endpoints, loc="upper left", fontsize=10)
+    ax.legend(legend_patches, frameworks, loc="upper right", fontsize=10)
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor="white")

@@ -20,7 +20,7 @@ from django_project.users.models import BenchmarkUser
 
 import sys
 sys.path.insert(0, str(__file__).rsplit("/", 2)[0])
-from shared.data import JSON_1K, JSON_10K
+import test_data
 
 
 api = BoltAPI()
@@ -40,13 +40,13 @@ class UserSchema(msgspec.Struct):
 @api.get("/json-1k")
 async def json_1k():
     """Return ~1KB JSON response."""
-    return JSON_1K
+    return test_data.JSON_1K
 
 
 @api.get("/json-10k")
 async def json_10k():
     """Return ~10KB JSON response."""
-    return JSON_10K
+    return test_data.JSON_10K
 
 
 @api.get("/db", response_model=list[UserSchema])

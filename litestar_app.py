@@ -18,7 +18,7 @@ from litestar.di import Provide
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-from shared.data import JSON_1K, JSON_10K
+import test_data
 from shared.models import Base, User, UserResponse
 
 
@@ -64,13 +64,13 @@ async def on_startup():
 @get("/json-1k")
 async def json_1k() -> list[dict[str, Any]]:
     """Return ~1KB JSON response."""
-    return JSON_1K
+    return test_data.JSON_1K
 
 
 @get("/json-10k")
 async def json_10k() -> list[dict[str, Any]]:
     """Return ~10KB JSON response."""
-    return JSON_10K
+    return test_data.JSON_10K
 
 
 @get("/db", dependencies={"db": Provide(get_db)})

@@ -1,6 +1,6 @@
 # Framework Benchmark Results
 
-**Date:** 2025-12-25 19:35:43
+**Date:** 2025-12-25 20:02:19
 
 ## Configuration
 
@@ -24,34 +24,34 @@
 
 | Framework | RPS | Latency (avg) | Latency (p99) | Errors |
 |-----------|----:|-------------:|-------------:|-------:|
-| django-bolt | 27,009 | 0.00ms | 0.00ms | 0 |
-| litestar | 21,638 | 0.00ms | 0.00ms | 0 |
-| fastapi | 8,017 | 0.01ms | 0.00ms | 0 |
-| django-ninja | 2,422 | 0.04ms | 0.00ms | 0 |
+| django-bolt | 27,352 | 0.00ms | 0.00ms | 0 |
+| litestar | 21,782 | 0.00ms | 0.00ms | 0 |
+| fastapi | 9,652 | 0.01ms | 0.00ms | 0 |
+| django-ninja | 2,256 | 0.04ms | 0.00ms | 0 |
 
 ### /json-10k
 
 | Framework | RPS | Latency (avg) | Latency (p99) | Errors |
 |-----------|----:|-------------:|-------------:|-------:|
-| django-bolt | 20,298 | 0.00ms | 0.00ms | 0 |
-| litestar | 15,926 | 0.01ms | 0.00ms | 0 |
-| django-ninja | 2,116 | 0.05ms | 0.00ms | 0 |
-| fastapi | 1,545 | 0.06ms | 0.00ms | 0 |
+| django-bolt | 21,132 | 0.00ms | 0.00ms | 0 |
+| litestar | 17,861 | 0.01ms | 0.00ms | 0 |
+| fastapi | 2,118 | 0.05ms | 0.00ms | 0 |
+| django-ninja | 2,020 | 0.05ms | 0.00ms | 0 |
 
 ### /db
 
 | Framework | RPS | Latency (avg) | Latency (p99) | Errors |
 |-----------|----:|-------------:|-------------:|-------:|
-| django-bolt | 3,377 | 0.03ms | 0.00ms | 0 |
-| fastapi | 1,023 | 0.10ms | 0.00ms | 0 |
-| litestar | 1,016 | 0.10ms | 0.00ms | 0 |
-| django-ninja | 706 | 0.14ms | 0.00ms | 0 |
+| django-bolt | 3,277 | 0.03ms | 0.00ms | 0 |
+| litestar | 1,022 | 0.10ms | 0.00ms | 0 |
+| fastapi | 1,018 | 0.10ms | 0.00ms | 0 |
+| django-ninja | 695 | 0.14ms | 0.00ms | 0 |
 
 ## Summary (RPS by Endpoint)
 
 | Framework | /json-1k | /json-10k | /db |
 |-----------|--------:|--------:|--------:|
-| django-ninja | 2,422 | 2,116 | 706 |
-| litestar | 21,638 | 15,926 | 1,016 |
-| fastapi | 8,017 | 1,545 | 1,023 |
-| django-bolt | 27,009 | 20,298 | 3,377 |
+| django-ninja | 2,256 | 2,020 | 695 |
+| django-bolt | 27,352 | 21,132 | 3,277 |
+| fastapi | 9,652 | 2,118 | 1,018 |
+| litestar | 21,782 | 17,861 | 1,022 |
