@@ -1,5 +1,13 @@
 # Framework Benchmark
 
+![Framework Benchmark](graphs/benchmark_combined.png)
+
+**Django Bolt wins across all endpoints**, showing significant performance gains especially for JSON serialization workloads.
+
+> **Disclaimer:** This is an informal benchmark run on a local development machine without proper isolation. It does not follow benchmarking best practices such as Docker containerization, CPU pinning, or elimination of background process interference. Results may vary significantly in production environments. Take these numbers as a rough indicator, not absolute truth.
+
+---
+
 Compares 4 Python web frameworks with identical endpoints:
 
 - **FastAPI** - ASGI framework with Pydantic
@@ -83,3 +91,4 @@ uv run python bench.py
 | Litestar     | 8002 |
 | Django Ninja | 8003 |
 | Django Bolt  | 8004 |
+
