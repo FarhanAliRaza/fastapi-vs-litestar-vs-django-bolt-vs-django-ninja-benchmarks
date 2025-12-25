@@ -2,7 +2,7 @@
 
 ![Framework Benchmark](graphs/benchmark_combined.png)
 
-**Django Bolt wins across all endpoints**, showing significant performance gains especially for JSON serialization workloads.
+**[Django Bolt](https://github.com/FarhanAliRaza/django-bolt) wins across all endpoints**, showing significant performance gains especially for JSON serialization workloads.
 
 > **Disclaimer:** This is an informal benchmark run on a local development machine without proper isolation. It does not follow benchmarking best practices such as Docker containerization, CPU pinning, or elimination of background process interference. Results may vary significantly in production environments. Take these numbers as a rough indicator, not absolute truth.
 
