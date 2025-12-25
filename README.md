@@ -10,10 +10,10 @@
 
 Compares 4 Python web frameworks with identical endpoints:
 
-- **FastAPI** - ASGI framework with Pydantic
-- **Litestar** - High-performance ASGI framework
-- **Django Ninja** - Django + Pydantic API framework
-- **Django Bolt** - Rust-powered Django API framework
+- **[FastAPI](https://github.com/fastapi/fastapi)** - ASGI framework with Pydantic
+- **[Litestar](https://github.com/litestar-org/litestar)** - High-performance ASGI framework
+- **[Django Ninja](https://github.com/vitalik/django-ninja)** - Django + Pydantic API framework
+- **[Django Bolt](https://github.com/FarhanAliRaza/django-bolt)** - Rust-powered Django API framework
 
 ## Endpoints
 
