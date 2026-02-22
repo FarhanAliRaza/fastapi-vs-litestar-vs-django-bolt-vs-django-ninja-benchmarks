@@ -17,8 +17,8 @@ from fastapi import FastAPI, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-import test_data
-from shared.models import Base, User, UserResponse
+from shared import data as test_data
+from shared.models import Base, User, UserResponse, Item, SlowResponse
 
 
 # Database setup
@@ -65,13 +65,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/json-1k")
+@app.get("/json-1k", response_model=list[Item])
 async def json_1k():
     """Return ~1KB JSON response."""
     return test_data.JSON_1K
 
 
-@app.get("/json-10k")
+@app.get("/json-10k", response_model=list[Item])
 async def json_10k():
     """Return ~10KB JSON response."""
     return test_data.JSON_10K
@@ -86,8 +86,8 @@ async def db_read(db: AsyncSession = Depends(get_db)):
     return users
 
 
-@app.get("/slow")
+@app.get("/slow", response_model=SlowResponse)
 async def slow():
     """Mock slow API - 2 second delay."""
     await asyncio.sleep(2)
-    return {"status": "ok", "delay_seconds": 2}
+    return SlowResponse(status="ok", delay_seconds=2)

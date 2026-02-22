@@ -38,3 +38,22 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class Item(BaseModel):
+    """Pydantic response model for JSON benchmark items."""
+
+    id: int
+    name: str
+    description: str
+    price: float
+    category: str
+    in_stock: bool
+    tags: list[str]
+
+
+class SlowResponse(BaseModel):
+    """Pydantic response model for the slow endpoint."""
+
+    status: str
+    delay_seconds: int

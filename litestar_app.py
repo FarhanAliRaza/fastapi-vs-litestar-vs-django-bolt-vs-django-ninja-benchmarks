@@ -11,15 +11,38 @@ Litestar Benchmark Application
 from __future__ import annotations
 
 import asyncio
-from typing import Any
-
+import msgspec
 from litestar import Litestar, get
 from litestar.di import Provide
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-import test_data
-from shared.models import Base, User, UserResponse
+from shared import data as test_data
+from shared.models import Base, User
+
+
+class UserSchema(msgspec.Struct):
+    id: int
+    username: str
+    email: str
+    first_name: str
+    last_name: str
+    is_active: bool
+
+
+class ItemSchema(msgspec.Struct):
+    id: int
+    name: str
+    description: str
+    price: float
+    category: str
+    in_stock: bool
+    tags: list[str]
+
+
+class SlowSchema(msgspec.Struct):
+    status: str
+    delay_seconds: int
 
 
 # Database setup
@@ -62,31 +85,40 @@ async def on_startup():
 
 
 @get("/json-1k")
-async def json_1k() -> list[dict[str, Any]]:
+async def json_1k() -> list[ItemSchema]:
     """Return ~1KB JSON response."""
-    return test_data.JSON_1K
+    return [ItemSchema(**item) for item in test_data.JSON_1K]
 
 
 @get("/json-10k")
-async def json_10k() -> list[dict[str, Any]]:
+async def json_10k() -> list[ItemSchema]:
     """Return ~10KB JSON response."""
-    return test_data.JSON_10K
+    return [ItemSchema(**item) for item in test_data.JSON_10K]
 
 
 @get("/db", dependencies={"db": Provide(get_db)})
-async def db_read(db: AsyncSession) -> list[UserResponse]:
+async def db_read(db: AsyncSession) -> list[UserSchema]:
     """Read 10 users from database."""
     stmt = select(User).limit(10)
     result = await db.execute(stmt)
-    users = result.scalars().all()
-    return [UserResponse.model_validate(u) for u in users]
+    return [
+        UserSchema(
+            id=u.id,
+            username=u.username,
+            email=u.email,
+            first_name=u.first_name,
+            last_name=u.last_name,
+            is_active=u.is_active,
+        )
+        for u in result.scalars().all()
+    ]
 
 
 @get("/slow")
-async def slow() -> dict[str, Any]:
+async def slow() -> SlowSchema:
     """Mock slow API - 2 second delay."""
     await asyncio.sleep(2)
-    return {"status": "ok", "delay_seconds": 2}
+    return SlowSchema(status="ok", delay_seconds=2)
 
 
 app = Litestar(

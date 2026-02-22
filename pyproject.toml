@@ -6,21 +6,24 @@ requires-python = ">=3.12"
 dependencies = [
     # FastAPI
     "fastapi>=0.127.0",
-    "uvicorn[standard]>=0.32.0",
+    "granian>=1.0.0",
     # Litestar
     "litestar[standard]>=2.19.0",
     # Django + Django Ninja + Django Bolt
     "django>=5.0",
     "django-ninja>=1.5.1",
-    "django-bolt==0.4.7",
+    "django-bolt==0.6.1",
     # Async SQLite for FastAPI ORM tests
     "sqlalchemy[asyncio]>=2.0.0",
     "aiosqlite>=0.20.0",
+    # PostgreSQL async (for true async ORM benchmark)
+    "psycopg[binary]>=3.0",
     # Shared
     "msgspec>=0.19.0",
     "orjson>=3.10.0",
     # Graphing
     "matplotlib>=3.9.0",
+    "django-turbo-orm>=0.1.1",
 ]
 
 [project.optional-dependencies]

@@ -45,17 +45,17 @@ rm -f "$PID_FILE"
 
 # Start FastAPI
 echo -e "${YELLOW}Starting FastAPI on port 8001...${NC}"
-uv run uvicorn fastapi_app:app --host 0.0.0.0 --port 8001 --workers 1 --no-access-log &
+uv run granian --interface asgi fastapi_app:app --host 0.0.0.0 --port 8001 --workers 1 &
 echo $! >> "$PID_FILE"
 
 # Start Litestar
 echo -e "${YELLOW}Starting Litestar on port 8002...${NC}"
-uv run uvicorn litestar_app:app --host 0.0.0.0 --port 8002 --workers 1 --no-access-log &
+uv run granian --interface asgi litestar_app:app --host 0.0.0.0 --port 8002 --workers 1 &
 echo $! >> "$PID_FILE"
 
 # Start Django Ninja
 echo -e "${YELLOW}Starting Django Ninja on port 8003...${NC}"
-uv run uvicorn django_project.asgi:application --host 0.0.0.0 --port 8003 --workers 1 --no-access-log &
+uv run granian --interface asgi django_project.asgi:application --host 0.0.0.0 --port 8003 --workers 1 &
 echo $! >> "$PID_FILE"
 
 # Start Django Bolt
