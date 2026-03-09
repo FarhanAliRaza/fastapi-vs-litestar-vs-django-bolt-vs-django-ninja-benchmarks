@@ -12,7 +12,7 @@ dependencies = [
     # Django + Django Ninja + Django Bolt
     "django>=5.0",
     "django-ninja>=1.5.1",
-    "django-bolt==0.6.1",
+    "django-bolt==0.7.0",
     # Async SQLite for FastAPI ORM tests
     "sqlalchemy[asyncio]>=2.0.0",
     "aiosqlite>=0.20.0",

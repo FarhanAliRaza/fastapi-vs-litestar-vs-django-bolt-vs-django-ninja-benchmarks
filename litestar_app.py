@@ -17,8 +17,22 @@ from litestar.di import Provide
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-from shared import data as test_data
-from shared.models import Base, User
+import test_data
+
+from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    email = Column(String(100), unique=True, index=True, nullable=False)
+    first_name = Column(String(50), nullable=False, default="")
+    last_name = Column(String(50), nullable=False, default="")
+    is_active = Column(Boolean, default=True)
 
 
 class UserSchema(msgspec.Struct):
@@ -87,13 +101,13 @@ async def on_startup():
 @get("/json-1k")
 async def json_1k() -> list[ItemSchema]:
     """Return ~1KB JSON response."""
-    return [ItemSchema(**item) for item in test_data.JSON_1K]
+    return test_data.JSON_1K
 
 
 @get("/json-10k")
-async def json_10k() -> list[ItemSchema]:
+async def json_10k()-> list[ItemSchema]:
     """Return ~10KB JSON response."""
-    return [ItemSchema(**item) for item in test_data.JSON_10K]
+    return test_data.JSON_10K
 
 
 @get("/db", dependencies={"db": Provide(get_db)})

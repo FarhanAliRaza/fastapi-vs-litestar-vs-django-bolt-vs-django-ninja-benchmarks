@@ -36,21 +36,30 @@ class UserSchema(msgspec.Struct):
     last_name: str
     is_active: bool
 
+class ItemSchema(msgspec.Struct):
+    id: int
+    name: str
+    description: str
+    price: float
+    category: str
+    in_stock: bool
+    tags: list[str]
 
-@api.get("/json-1k")
-async def json_1k():
+
+@api.get("/json-1k", validate_response=False)
+async def json_1k() -> list[ItemSchema]:
     """Return ~1KB JSON response."""
     return test_data.JSON_1K
 
 
-@api.get("/json-10k")
-async def json_10k():
+@api.get("/json-10k", validate_response=False)
+async def json_10k() -> list[ItemSchema]:
     """Return ~10KB JSON response."""
     return test_data.JSON_10K
 
 
-@api.get("/db", response_model=list[UserSchema])
-async def db_read():
+@api.get("/db",validate_response=False)
+async def db_read() -> list[UserSchema]:
     """Read 10 users from database."""
     users = []
     async for user in BenchmarkUser.objects.all()[:10]:
